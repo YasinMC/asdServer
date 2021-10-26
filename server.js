@@ -387,12 +387,13 @@ app.post('/findAllOffenders', async (req,res) => {
 
   res.send(offenders);
 })
-app.post('/createOffender', async (req,res) => {
+app.post('/createOffender',verify, async (req,res) => {
   //Ensure we have all fields we need
-  if(!req.body.name) return res.send({status: "name field empty"});
-  if(!req.body.reportID) return res.send({status: "reportID field empty"});
+  if(!req.body.fName || !req.body.lName) return res.send({status: "name field empty"});
   if(!req.body.description) return res.send({status: "description field empty"});
 
+  console.log(req.body);
+  /*
   //If all Fields are good attempt to add user to datebase
   try {
     //add user to mongoDB
@@ -401,7 +402,7 @@ app.post('/createOffender', async (req,res) => {
   } catch (error) {
     console.log(error);
     res.send({status: `error creating offender`});
-  }
+  }*/
 })
 
 //store admin end-points
@@ -414,8 +415,8 @@ app.post('/addStore',verifyAdmin, async (req,res) => {
   try {
     add = await db.addStore(req.body.store);
     console.log(add);
-    if(add.modifiedCount == 1) res.send({status: "added store successfully"});
-    if(add.modifiedCount != 1) res.send({status: "could not add store"});
+    if(add.modifiedCount == 1) res.send({status: "Added store successfully"});
+    if(add.modifiedCount != 1) res.send({status: "Could not add store"});
   } catch (error) {
     console.log(error);
     res.send({status: "error adding store"})
@@ -424,12 +425,35 @@ app.post('/addStore',verifyAdmin, async (req,res) => {
 
 app.post('/deleteStore',verifyAdmin, async (req,res) => {
   del = await db.deleteStore(req.body.store);
-  if(del.modifiedCount == 1) res.send({status: "store deleted", return: del});
-  if(del.modifiedCount != 1) res.send({status: "store not deleted. Please try again"})
+  if(del.modifiedCount == 1) res.send({status: "Store deleted", return: del});
+  if(del.modifiedCount != 1) res.send({status: "Store not deleted. Please try again"})
   }
 )
 
+app.post('/addCentre',verifyAdmin, async (req,res) => {
+  try {
+    add = await db.addCentre(req.body.centre);
+    console.log(add);
+    if (add.insertedId) res.send({status: "Added centre successfully"});
+    if (!add.insertedId) res.send({status: "Could not add centre"});
+  } catch (error) {
+    console.log(error);
+    res.send({status: "Could not add centre"});
+  }
+})
 
+app.post('/deleteCentre',verifyAdmin, async (req,res) => {
+  try {
+  del = await db.deleteCentre(req.body.centre);
+  console.log(del);
+  if(del.deletedCount == 1) res.send({status: "Centre deleted", return: del});
+  if(del.deletedCount != 1) res.send({status: "Centre not deleted. Please try again"})
+  } catch (error) {
+    console.log(error);
+      res.send("Centre not deleted!");
+  }
+  }
+)
 
 //verify end-points
 function verify(req,res,next) {
