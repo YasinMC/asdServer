@@ -382,27 +382,28 @@ app.post('/allComplaints',verifyAdmin, async (req,res) => {
 
   res.send(complaints);
 })
-app.post('/findAllOffenders', async (req,res) => {
+app.post('/findAllOffenders',verify, async (req,res) => {
   offenders = await db.getAllOffenders();
 
   res.send(offenders);
 })
 app.post('/createOffender',verify, async (req,res) => {
   //Ensure we have all fields we need
-  if(!req.body.fName || !req.body.lName) return res.send({status: "name field empty"});
-  if(!req.body.description) return res.send({status: "description field empty"});
+  if(!req.body.offender.fName || !req.body.offender.lName) return res.send({status: "name field empty"});
+  if(!req.body.offender.description) return res.send({status: "description field empty"});
 
   console.log(req.body);
-  /*
+  
   //If all Fields are good attempt to add user to datebase
   try {
     //add user to mongoDB
-    db.addOffender(req.body);
-    res.send({status: `added offender`});
+    const OID = await db.addOffender(req.body.offender);
+    console.log(OID);
+    res.send({status: `added offender`, offenderId: OID});
   } catch (error) {
     console.log(error);
     res.send({status: `error creating offender`});
-  }*/
+  }
 })
 
 //store admin end-points

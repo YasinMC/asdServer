@@ -294,7 +294,8 @@ async function addOffender(offender) {
 
   //query DB. add offender
   const user = await client.db("ASDdata").collection("OffendersTEST").insertOne(offender);
-  console.log("new offender added: ", offender);
+  console.log("new offender added: ", offender._id.toString());
+  return offender._id.toString();
 }
 
 
