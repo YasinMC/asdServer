@@ -7,6 +7,17 @@ const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const bcrypt = require("bcrypt");
 const db = require('./Database/dbQueries');
+const fs = require('fs');
+const https = require('https');
+
+var key = fs.readFileSync('selfsigned.key');
+var cert = fs.readFileSync('selfsigned.crt');
+
+
+var options = {
+  key: key,
+  cert: cert
+};
 
 app.use(cors());
 
@@ -16,6 +27,7 @@ app.use(bodyParser.json());
 app.get('/', async (req, res) => {
     res.send({message:'welcome to the server'});
 });
+
 
 //complaint end-points
 app.post('/api/submitComplaint',verify, async (req, res) => {
@@ -42,6 +54,7 @@ app.post('/api/submitComplaint',verify, async (req, res) => {
     });
   }
 });
+
 app.post('/fetchComplaints',verify, async (req, res) => {
   console.log(req.body);
   complaints = await db.userIncidents({userId: req.body.user._id});
@@ -476,7 +489,8 @@ app.post('/getAllUsers', verifyAdmin, async (req, res) => {
   res.send(users);
 })
 
+const server = https.createServer(options, app);
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
 })
