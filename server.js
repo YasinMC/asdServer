@@ -526,7 +526,7 @@ app.post('/api/submitGuestComplaint',verify, async (req, res) => {
     guestcomplaint = req.body.guestcomplaint;
     guestcomplaint.userId = userID._id;
     delete guestcomplaint.token;
-    db.reportIncident(guestcomplaint);
+    db.guestReportIncident(guestcomplaint);
     console.log(guestcomplaint);
     res.send({status: "incident reported"});
   } catch (error) {
@@ -539,14 +539,14 @@ app.post('/api/submitGuestComplaint',verify, async (req, res) => {
 });
 app.post('/fetchGuestComplaints',verify, async (req, res) => {
   console.log(req.body);
-  guestcomplaints = await db.userIncidents({userId: req.body.user._id});
+  guestcomplaints = await db.guestIncidents({userId: req.body.user._id});
   console.log(guestcomplaints);
   res.send(guestcomplaints);
 });
 app.post('/fetchGuestComplaint',verify, async (req, res) => {
   try {
     console.log(req.body);
-    guestcomplaint = await db.userIncident(req.body.user._id, req.body.guestcomplaintId);
+    guestcomplaint = await db.guestIncident(req.body.user._id, req.body.guestcomplaintId);
     console.log(guestcomplaint);
     res.send(guestcomplaint);
   } catch (error) {
@@ -557,9 +557,9 @@ app.post('/fetchGuestComplaint',verify, async (req, res) => {
 app.post('/deleteGuestComplaint',verify, async (req, res) => {
   const userID = jwt.verify(req.body.token, process.env.ACCESS_SECRET);
   if (userID.admin) {
-    guestcomplaint = await db.AdminDeleteIncident(req.body.guestcomplaintId);
+    guestcomplaint = await db.AdminDeleteGuestIncident(req.body.guestcomplaintId);
   } else {
-    guestcomplaint = await db.deleteIncident(req.body.guestcomplaintId, req.body.user._id);
+    guestcomplaint = await db.guestDeleteIncident(req.body.guestcomplaintId, req.body.user._id);
   }
   if(guestcomplaint.deletedCount == 1) res.send({status: "report deleted", return: guestcomplaint});
   if(guestcomplaint.deletedCount != 1) res.send({status: "report not deleted. Please try again"})
@@ -568,9 +568,9 @@ app.post('/updateGuestComplaint',verify, async (req, res) => {
   try {
     if(req.body.user.admin){
       console.log("yesyesytes" ,req.body.id);
-      update = await db.updateIncident({ _id: req.body.id }, req.body.update);
+      update = await db.guestUpdateIncident({ _id: req.body.id }, req.body.update);
     }else{
-      update = await db.updateIncident({
+      update = await db.guestUpdateIncident({
         userId: req.body.user._id,
         _id: req.body.id
       }, req.body.update);
