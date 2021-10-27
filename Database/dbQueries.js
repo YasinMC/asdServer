@@ -189,6 +189,23 @@ async function addStore(store) {
     return addedStore;
 }
 
+async function addCentre(centre) {
+    let client = getMongoClient();
+    await connect(client);
+
+    const stores = [];
+
+    let centreName = centre.cName;
+
+    const addedCentre = await client.db("ASDdata").collection("SCentres").insertOne(
+        {
+            name: centreName,
+            stores: stores
+        });
+
+    return addedCentre;
+}
+
 async function deleteStore(store) {
     //connect to db
     let client = getMongoClient();
@@ -210,6 +227,16 @@ async function deleteStore(store) {
         {name: store.sCentre}, { $set: { stores: newStoreArr }});
     console.log(storeArr)
     return storeArr;
+}
+
+async function deleteCentre(centre) {
+    //connect to db
+    let client = getMongoClient();
+    await connect(client);
+
+    //query DB. delete
+    const deleted = await client.db("ASDdata").collection("SCentres").deleteOne({name: centre.cName})
+    return deleted;
 }
 
 //centre employee queries (admin queries)
@@ -300,6 +327,6 @@ async function addOffender(offender) {
 
 
 module.exports = {
-    getAllUsers: getAllUsers, addUser,addUserAdmin, findUser, reportIncident, userIncidents, deleteIncident, updateIncident, userIncident, addID , deleteID, updateID, findID, findAllID, deleteUser, updateUser, AdminDeleteIncident, allIncidents, getAllStores, addStore, findUserByEmail, deleteStore, getAllOffenders, addOffender
+    getAllUsers: getAllUsers, addUser,addUserAdmin, findUser, reportIncident, userIncidents, deleteIncident, updateIncident, userIncident, addID , deleteID, updateID, findID, findAllID, deleteUser, updateUser, AdminDeleteIncident, allIncidents, getAllStores, addStore, findUserByEmail, deleteStore, getAllOffenders, addOffender, addCentre, deleteCentre
 };
 
