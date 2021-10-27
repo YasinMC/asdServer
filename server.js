@@ -585,7 +585,7 @@ app.post('/updateGuestComplaint',verify, async (req, res) => {
   }
 });
 
-app.post('/api/submitInquiry',verify, async (req, res) => {
+app.post('/api/submitInquiry', async (req, res) => {
 
   if(!req.body.inquiry.email || !req.body.inquiry.inquiry ){
     return res.send({status: "failed to submit inquiry. Please fill all fields"})
