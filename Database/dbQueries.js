@@ -410,8 +410,8 @@ async function submitInquiry(inquiry){
     await connect(client);
 
     //query DB. add incident report
-    const inquiry = await client.db("ASDdata").collection("Inquiry").insertOne(inquiry);
-    console.log("new inquiry added: ", inquiry);
+    const i = await client.db("ASDdata").collection("Inquiry").insertOne(inquiry);
+    console.log("new inquiry added: ", i);
 }
 
 module.exports = {
